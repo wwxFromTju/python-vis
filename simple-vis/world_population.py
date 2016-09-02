@@ -4,6 +4,7 @@
 import json
 
 import pygal.maps.world as hehe
+from pygal.style import LightColorizedStyle
 
 from country_code import get_country_code
 
@@ -21,9 +22,21 @@ for pop_dict in pop_data:
         if code:
             cc_populations[code] = population
 
-wm = hehe.World()
-wm.title = 'just world map'
-wm.add('2010', cc_populations)
+cc_pops_1, cc_pops_2, cc_pops_3 = {}, {}, {}
+for cc, pop in cc_populations.items():
+    if pop < 10000000:
+        cc_pops_1[cc] = pop
+    elif pop < 1000000000:
+        cc_pops_2[cc] = pop
+    else:
+        cc_pops_3[cc] = [pop]
 
-wm.render_to_file('world_populations_map.svg')
+wm_style = LightColorizedStyle
+wm = hehe.World(style=wm_style)
+wm.title = 'just world map'
+wm.add('0-10m', list(cc_pops_1))
+wm.add('10m-1bn', list(cc_pops_2))
+wm.add('>1bn', list(cc_pops_3))
+
+wm.render_to_file('worldpopulations_map_2.svg')
 
